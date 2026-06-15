@@ -1,42 +1,55 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function ExpenseForm({ refresh }) {
+export default function ExpenseForm({
+  refresh,
+}) {
   const [form, setForm] = useState({
     description: "",
     amount: "",
     category: "Food",
-    date: new Date().toISOString().split("T")[0],
+    date: new Date()
+      .toISOString()
+      .split("T")[0],
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      await axios.post("http://localhost:5000/expenses", form);
+    await axios.post(
+      "http://localhost:5000/expenses",
+      form
+    );
 
-      setForm({
-        ...form,
-        description: "",
-        amount: "",
-      });
+    setForm({
+      description: "",
+      amount: "",
+      category: "Food",
+      date: new Date()
+        .toISOString()
+        .split("T")[0],
+    });
 
-      refresh();
-    } catch (error) {
-      console.error("Errore:", error);
-    }
+    refresh();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        display: "flex",
+        gap: "10px",
+        marginBottom: "20px",
+      }}
+    >
       <input
-        type="text"
         placeholder="Descrizione"
         value={form.description}
         onChange={(e) =>
           setForm({
             ...form,
-            description: e.target.value,
+            description:
+              e.target.value,
           })
         }
       />
@@ -54,7 +67,41 @@ export default function ExpenseForm({ refresh }) {
         }
       />
 
-      <button type="submit">Salva</button>
+      <select
+        value={form.category}
+        onChange={(e) =>
+          setForm({
+            ...form,
+            category:
+              e.target.value,
+          })
+        }
+      >
+        <option value="Food">
+          Food
+        </option>
+        <option value="Home">
+          Casa
+        </option>
+        <option value="Transport">
+          Trasporti
+        </option>
+      </select>
+
+      <input
+        type="date"
+        value={form.date}
+        onChange={(e) =>
+          setForm({
+            ...form,
+            date: e.target.value,
+          })
+        }
+      />
+
+      <button type="submit">
+        Salva
+      </button>
     </form>
   );
 }
